@@ -3,6 +3,11 @@ from flask import Flask, request, render_template
 app = Flask(__name__)
 
 
+usuarios = {
+    'juan': 'admin',
+    'pepe': 'user'
+}
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -31,5 +36,26 @@ def ejercicio1():
                         descontado=descontado, total_con_desc=total_con_desc)
     return render_template('ejercicio1.html')
 
+@app.route('/ejercicio2', methods=['GET', 'POST'])
+def ejercicio2():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        contra = request.form['contra']
+        resultado = None
+
+        try:
+            if usuarios[nombre] != contra:
+                raise ValueError('Contraseña incorrecta')
+
+            if nombre == 'juan':
+                resultado = 'Bienvenido administrador juan'
+            elif nombre == 'pepe':
+                resultado = 'Bienvenido usuario pepe'
+        except (KeyError, ValueError):
+            resultado = 'Usuario o contraseña incorrectos'
+
+        return render_template('ejercicio2.html', resultado=resultado)
+    return render_template('ejercicio2.html')
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
